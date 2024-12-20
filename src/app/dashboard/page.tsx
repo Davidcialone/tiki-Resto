@@ -153,7 +153,14 @@ export default function AdminDashboard() {
 }
 
 // Composant Carte Statistique
-function StatCard({ title, value, icon, trend }) {
+interface StatCardProps {
+  title: string;
+  value: string;
+  icon: React.ReactNode;
+  trend: string;
+}
+
+function StatCard({ title, value, icon, trend }: StatCardProps) {
   return (
     <div className="bg-[#2a2a2a] rounded-xl p-6 border border-[#C4B5A2]/30">
       <div className="flex items-center justify-between mb-4">
@@ -171,8 +178,14 @@ function StatCard({ title, value, icon, trend }) {
 }
 
 // Composant État de Table
-function TableStatusCard({ table }) {
-  const getStatusColor = (status) => {
+interface Table {
+  id: number;
+  status: string;
+  capacity: number;
+}
+
+function TableStatusCard({ table }: { table: Table }) {
+  const getStatusColor = (status: string) => {
     switch(status) {
       case 'available': return 'bg-green-500';
       case 'occupied': return 'bg-red-500';
@@ -193,8 +206,16 @@ function TableStatusCard({ table }) {
 }
 
 // Composant Ligne de Réservation
-function ReservationRow({ name, table, time, people, status }) {
-  const getStatusInfo = (status) => {
+interface ReservationRowProps {
+  name: string;
+  table: string;
+  time: string;
+  people: string;
+  status: string;
+}
+
+function ReservationRow({ name, table, time, people, status }: ReservationRowProps) {
+  const getStatusInfo = (status: string) => {
     switch(status) {
       case 'confirmed':
         return {

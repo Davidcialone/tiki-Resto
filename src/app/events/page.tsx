@@ -10,7 +10,7 @@ export default function EventsPage() {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [editingEvent, setEditingEvent] = useState(null);
+  const [editingEvent, setEditingEvent] = useState<typeof events[0] | null>(null);
   const [isAddingEvent, setIsAddingEvent] = useState(false);
 
   const [events, setEvents] = useState([
@@ -43,7 +43,7 @@ export default function EventsPage() {
     }
   ]);
 
-  const [newEvent, setNewEvent] = useState({
+  const [newEvent, setNewEvent] = useState<typeof events[0]>({
     id: null,
     title: "",
     description: "",
@@ -54,8 +54,8 @@ export default function EventsPage() {
   });
 
   // Grouper les événements par mois
-  const groupedEvents = useMemo(() => {
-    return events.reduce((groups, event) => {
+  const groupedEvents = useMemo<{ [key: string]: typeof events }>(() => {
+    return events.reduce((groups: { [key: string]: typeof events }, event) => {
       const date = new Date(event.date);
       const monthYear = date.toLocaleString('fr-FR', { month: 'long', year: 'numeric' });
       
@@ -65,7 +65,7 @@ export default function EventsPage() {
       groups[monthYear].push(event);
       
       // Trier les événements au sein de chaque mois par date
-      groups[monthYear].sort((a, b) => new Date(a.date) - new Date(b.date));
+      groups[monthYear].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
       
       return groups;
     }, {});
@@ -76,7 +76,7 @@ export default function EventsPage() {
     return Object.keys(groupedEvents).sort((a, b) => {
       const dateA = new Date(a.split(' ')[0] + ' 1, ' + a.split(' ')[1]);
       const dateB = new Date(b.split(' ')[0] + ' 1, ' + b.split(' ')[1]);
-      return dateA - dateB;
+      return dateA.getTime() - dateB.getTime();
     });
   }, [groupedEvents]);
 
@@ -105,7 +105,7 @@ export default function EventsPage() {
     });
   };
 
-  const handleEditEvent = (event) => {
+  const handleEditEvent = (event: typeof events[0]) => {
     setEditingEvent(event);
     setNewEvent(event);
     setIsEditing(true);
@@ -113,7 +113,7 @@ export default function EventsPage() {
 
   const handleUpdateEvent = () => {
     const updatedEvents = events.map(event =>
-      event.id === editingEvent.id ? newEvent : event
+      editingEvent && event.id === editingEvent.id ? newEvent : event
     );
     setEvents(updatedEvents);
     setIsEditing(false);

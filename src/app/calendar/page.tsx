@@ -13,7 +13,9 @@ import {
 } from 'lucide-react';
 
 // Données simulées
-const mockReservations = [
+type ReservationStatus = 'confirmed' | 'pending' | 'cancelled';
+
+const mockReservations: { id: number; clientName: string; date: string; time: string; guests: number; tableNumber: number; status: ReservationStatus; }[] = [
   {
     id: 1,
     clientName: "Marie Dupont",
@@ -46,7 +48,7 @@ export default function ReservationCalendar() {
     { value: 'month', label: 'Mois' }
   ];
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status:'confirmed' | 'pending' | 'cancelled'):string => {
     switch(status) {
       case 'confirmed': return 'bg-green-500';
       case 'pending': return 'bg-yellow-500';
@@ -55,7 +57,7 @@ export default function ReservationCalendar() {
     }
   };
 
-  const getStatusIcon = (status) => {
+  const getStatusIcon = (status:'confirmed' | 'pending' | 'cancelled') => {
     switch(status) {
       case 'confirmed': return <CheckCircle className="w-5 h-5 text-green-500" />;
       case 'pending': return <AlertCircle className="w-5 h-5 text-yellow-500" />;
