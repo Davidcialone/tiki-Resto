@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, Users, MessageSquare, Phone, Mail, MapPin, CheckCircle } from 'lucide-react';
+import { Calendar, Clock, Users, MessageSquare, Phone, Mail, MapPin } from 'lucide-react';
 import Image from 'next/image';
 import Map from '@/components/map';
 
@@ -34,13 +34,13 @@ export default function ReservationPage() {
     }));
   };
 
-  // Vérification si on est côté client pour éviter l'accès à `window` côté serveur
+  // Vérification côté client pour éviter l'accès à `window` côté serveur
   useEffect(() => {
-    setIsClient(typeof window !== "undefined");
+    setIsClient(typeof window !== "undefined");  // Définit si on est côté client
   }, []);
 
   const handleLaunchNavigation = () => {
-    if (isClient) {
+    if (isClient) {  // S'assure que le code est exécuté seulement côté client
       window.open('https://maps.google.com?q=Chemin+du+Pontet+69150+Décines-Charpieu', '_blank');
     }
   };
