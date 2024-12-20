@@ -11,7 +11,9 @@ const tables = [
     { id: 6, seats: 4, available: true, x: 220, y: 120 }
   ];
 
-  const handleTableSelect = (tableId) => {
+  const [formData, setFormData] = useState<{ selectedTable: number | null }>({ selectedTable: null });
+
+  const handleTableSelect = (tableId: number) => {
     const table = tables.find(t => t.id === tableId);
     if (table && table.available) {
       setFormData(prev => ({

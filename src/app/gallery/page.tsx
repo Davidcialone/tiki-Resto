@@ -11,7 +11,7 @@ export default function GalleryPage() {
   const [selectedImage, setSelectedImage] = useState<{ id: number; src: string; category: string; title: string; description: string; } | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [editingImage, setEditingImage] = useState(null);
+  const [editingImage, setEditingImage] = useState<{ id: number; src: string; category: string; title: string; description: string; } | null>(null);
   const [isAddingImage, setIsAddingImage] = useState(false);
 
   const [categories, setCategories] = useState([
@@ -66,13 +66,21 @@ export default function GalleryPage() {
     }
   ]);
 
-  const [newImage, setNewImage] = useState({
-    id: null,
+  const [newImage, setNewImage] = useState<{
+    id: number;
+    src: string;
+    category: string;
+    title: string;
+    description: string;
+  }>({
+    id: 0,  // Initialisation avec un nombre par défaut
     src: "",
     category: "restaurant",
     title: "",
     description: ""
   });
+  
+  
 
   const filteredImages = activeCategory === 'all' 
     ? images 
@@ -102,38 +110,40 @@ export default function GalleryPage() {
   };
 
   const handleAddImage = () => {
+    // On garantit ici que l'id est un nombre valide en l'incrémentant à partir du tableau existant
     const imageWithId = {
       ...newImage,
-      id: images.length + 1
+      id: images.length > 0 ? images[images.length - 1].id + 1 : 1 // Incrémentation de l'id
     };
-    setImages([...images, imageWithId]);
+    setImages([...images, imageWithId]); // Ajout de l'image avec id valide
     setIsAddingImage(false);
     setNewImage({
-      id: null,
+      id: 0, // Réinitialisation de l'ID à 0
       src: "",
       category: "restaurant",
       title: "",
       description: ""
     });
   };
+  
 
-  const handleEditImage = (image) => {
+  const handleEditImage = (image: { id: number; src: string; category: string; title: string; description: string; }) => {
     setEditingImage(image);
     setNewImage(image);
     setIsEditing(true);
     setSelectedImage(null);
   };
 
-  const handleUpdateImage = () => {
-    const updatedImages = images.map(img =>
-      img.id === editingImage.id ? newImage : img
-    );
-    setImages(updatedImages);
-    setIsEditing(false);
-    setEditingImage(null);
-  };
+    const handleUpdateImage = () => {
+      const updatedImages = images.map(img =>
+        img.id === editingImage?.id ? newImage : img
+      );
+      setImages(updatedImages);
+      setIsEditing(false);
+      setEditingImage(null);
+    };
 
-  const handleDeleteImage = (imageId) => {
+  const handleDeleteImage = (imageId: number) => {
     const updatedImages = images.filter(img => img.id !== imageId);
     setImages(updatedImages);
     setSelectedImage(null);

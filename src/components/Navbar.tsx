@@ -74,6 +74,8 @@ export default function Navbar() {
                     href={href} 
                     active={pathname === href}
                     isAdmin={user?.role === 'admin'}
+                    mobile={false}
+                    onClick={() => {}}
                   >
                     {label}
                   </NavLink>
@@ -171,7 +173,16 @@ export default function Navbar() {
   );
 }
 
-function NavLink({ href, children, active, mobile, onClick, isAdmin }) {
+interface NavLinkProps {
+  href: string;
+  children: React.ReactNode;
+  active: boolean;
+  mobile: boolean;
+  onClick: () => void;
+  isAdmin: boolean;
+}
+
+function NavLink({ href, children, active, mobile, onClick, isAdmin }: NavLinkProps) {
   return (
     <Link
       href={href}

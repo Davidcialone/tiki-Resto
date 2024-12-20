@@ -28,7 +28,7 @@ export default function Menu() {
     }
   ]);
 
-  const [editingMenu, setEditingMenu] = useState(null);
+  const [editingMenu, setEditingMenu] = useState<number | null>(null);
   const [isAddingMenu, setIsAddingMenu] = useState(false);
   const [newMenu, setNewMenu] = useState({
     name: "",
@@ -38,19 +38,19 @@ export default function Menu() {
     highlight: false
   });
 
-  const handleEditMenu = (index) => {
+  const handleEditMenu = (index: number) => {
     setEditingMenu(index);
-    setNewMenu(specialMenus[index]);
+    setNewMenu({ ...specialMenus[index], highlight: specialMenus[index].highlight ?? false });
   };
 
-  const handleSaveMenu = (index) => {
+  const handleSaveMenu = (index: number) => {
     const updatedMenus = [...specialMenus];
     updatedMenus[index] = newMenu;
     setSpecialMenus(updatedMenus);
     setEditingMenu(null);
   };
 
-  const handleDeleteMenu = (index) => {
+  const handleDeleteMenu = (index: number) => {
     const updatedMenus = specialMenus.filter((_, idx) => idx !== index);
     setSpecialMenus(updatedMenus);
   };
@@ -74,7 +74,7 @@ export default function Menu() {
     });
   };
 
-  const handleRemoveMenuItem = (index) => {
+  const handleRemoveMenuItem = (index: number) => {
     setNewMenu({
       ...newMenu,
       items: newMenu.items.filter((_, idx) => idx !== index)

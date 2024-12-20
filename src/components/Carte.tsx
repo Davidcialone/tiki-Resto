@@ -1,173 +1,98 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
-import { Pencil, Edit, Trash2, Plus, X, Check } from 'lucide-react';
+import { Pencil, Trash2, Plus, X, Check } from 'lucide-react';
 
-export default function Carte() {
+type MenuItem = {
+  name: string;
+  description: string;
+  price: string;
+  imagePath: string;
+};
+
+type MenuItems = {
+  entrees: MenuItem[];
+  plats: MenuItem[];
+  desserts: MenuItem[];
+  boissons: MenuItem[];
+};
+
+export default function Menu() {
   const { user } = useAuth();
-  const [activeCategory, setActiveCategory] = useState('entrees');
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingItem, setEditingItem] = useState(null);
-  const [isAddingItem, setIsAddingItem] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<keyof MenuItems>('entrees');
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [editingItem, setEditingItem] = useState<{ item: MenuItem; index: number } | null>(null);
+  const [isAddingItem, setIsAddingItem] = useState<boolean>(false);
+  const [newItem, setNewItem] = useState<MenuItem>({
+    name: '',
+    description: '',
+    price: '',
+    imagePath: '',
+  });
 
-  const [categories, setCategories] = useState([
+  const [categories] = useState([
     { id: 'entrees', name: 'Entrées' },
     { id: 'plats', name: 'Plats' },
     { id: 'desserts', name: 'Desserts' },
-    { id: 'boissons', name: 'Boissons' }
+    { id: 'boissons', name: 'Boissons' },
   ]);
 
-  const [menuItems, setMenuItems] = useState({
+  const [menuItems, setMenuItems] = useState<MenuItems>({
     entrees: [
-      {
-          name: "Salade Lyonnaise",
-          description: "Mélange exotique de mangue, avocat et crevettes",
-          price: "14€",
-          imagePath: "/entrees/saladeLyonnaise.png"
-      },
-      {
-          name: "Ravioles aux cèpes",
-          description: "Saumon frais mariné, riz vinaigré, légumes croquants",
-          price: "16€",
-          imagePath: "/entrees/ravioles.jpeg"
-      },
-      {
-          name: "Oeuf en meurette",
-          description: "Légumes frais, vermicelles, menthe, sauce cacahuète",
-          price: "12€",
-          imagePath: "/entrees/oeufenmeurette.webp"
-      },
-      {
-          name: "Salade Chèvre chaud",
-          description: "Légumes frais, vermicelles, menthe, sauce cacahuète",
-          price: "12€",
-          imagePath: "/entrees/Salade-chevre-chaud.png"
-      }
+      { name: 'Salade Lyonnaise', description: 'Mélange exotique...', price: '14€', imagePath: '/entrees/saladeLyonnaise.png' },
+      { name: 'Ravioles aux cèpes', description: 'Saumon frais mariné...', price: '16€', imagePath: '/entrees/ravioles.jpeg' },
     ],
     plats: [
-    {
-      name: "Tataki de Thon",
-      description: "Poisson grillé, sauce passion, légumes de saison",
-      price: "28€",
-      imagePath: "/plats/tatakiThon.jpeg"
-    },
-    {
-      name: "Risotto St-Jacques",
-      description: "Mariné aux épices exotiques, riz coco, légumes",
-      price: "24€",
-      imagePath: "/plats/risotto.jpg"
-    },
-    {
-      name: "Magret de Canard",
-      description: "Légumes, lait de coco, curry maison, riz jasmin",
-      price: "22€",
-      imagePath: "/plats/magret.jpg"
-    },
-    {
-      name: "Onglet de Boeuf",
-      description: "Mariné aux épices exotiques, riz coco, légumes",
-      price: "24€",
-      imagePath: "/plats/onglet.webp"
-    },
-    {
-      name: "Tomahawk de Veau",
-      description: "Mariné aux épices exotiques, riz coco, légumes",
-      price: "24€",
-      imagePath: "/plats/Tomahawk_low.jpg"
-    },
-    {
-      name: "Grenouilles comme en Dombes",
-      description: "Mariné aux épices exotiques, riz coco, légumes",
-      price: "24€",
-      imagePath: "/plats/grenouilles.jpg"
-    },
+      { name: 'Tataki de Thon', description: 'Poisson grillé...', price: '28€', imagePath: '/plats/tatakiThon.jpeg' },
     ],
     desserts: [
-    {
-      name: "Brioche Perdue",
-      description: "Caramélisé au miel, glace coco, crumble",
-      price: "10€",
-      imagePath: "/dessert/brioche-perdue.jpg"
-    },
-    {
-      name: "Crème Brûlée",
-      description: "Coulis exotique, fruits frais, coco râpée",
-      price: "12€",
-      imagePath: "/dessert/creme-brulee.jpeg"
-    },
-    {
-      name: "Moelleux Chocolat",
-      description: "Caramélisé au miel, glace coco, crumble",
-      price: "10€",
-      imagePath: "/dessert/moelleux.jpg"
-    },
-    {
-      name: "Cafe Gourmand",
-      description: "Caramélisé au miel, glace coco, crumble",
-      price: "10€",
-      imagePath: "/dessert/cafe-gourmand.jpg"
-    },
+      { name: 'Brioche Perdue', description: 'Caramélisé au miel...', price: '10€', imagePath: '/dessert/brioche-perdue.jpg' },
     ],
     boissons: [
-    {
-      name: "Sex On The Beach",
-      description: "Rhum, jus fruits exotiques, sirop maison",
-      price: "12€",
-      imagePath: "/cocktails/Sexonthebeach.jpg"
-    },
-    {
-      name: "Espresso Martini",
-      description: "Mélange de jus frais sans alcool",
-      price: "8€",
-      imagePath: "/cocktails/espresso-Martini.webp"
-    }
-    ]
-  });
-
-  const [newItem, setNewItem] = useState({
-    name: "",
-    description: "",
-    price: "",
-    imagePath: ""
+      { name: 'Sex On The Beach', description: 'Rhum, jus fruits...', price: '12€', imagePath: '/cocktails/Sexonthebeach.jpg' },
+    ],
   });
 
   const handleAddItem = () => {
+    if (!newItem.name || !newItem.description || !newItem.price || !newItem.imagePath) {
+      alert('Tous les champs doivent être remplis.');
+      return;
+    }
+
     const updatedMenuItems = {
       ...menuItems,
-      [activeCategory]: [...menuItems[activeCategory], newItem]
+      [activeCategory]: [...menuItems[activeCategory], newItem],
     };
     setMenuItems(updatedMenuItems);
     setIsAddingItem(false);
-    setNewItem({
-      name: "",
-      description: "",
-      price: "",
-      imagePath: ""
-    });
+    setNewItem({ name: '', description: '', price: '', imagePath: '' });
   };
 
-  const handleEditItem = (item, index) => {
-    setEditingItem({ ...item, index });
+  const handleEditItem = (item: MenuItem, index: number) => {
+    setEditingItem({ item, index });
     setNewItem(item);
     setIsEditing(true);
   };
 
   const handleUpdateItem = () => {
+    if (!editingItem) return;
+
     const updatedMenuItems = {
       ...menuItems,
       [activeCategory]: menuItems[activeCategory].map((item, index) =>
         index === editingItem.index ? newItem : item
-      )
+      ),
     };
     setMenuItems(updatedMenuItems);
     setIsEditing(false);
     setEditingItem(null);
+    setNewItem({ name: '', description: '', price: '', imagePath: '' });
   };
 
-  const handleDeleteItem = (index) => {
+  const handleDeleteItem = (index: number) => {
     const updatedMenuItems = {
       ...menuItems,
-      [activeCategory]: menuItems[activeCategory].filter((_, idx) => idx !== index)
+      [activeCategory]: menuItems[activeCategory].filter((_, idx) => idx !== index),
     };
     setMenuItems(updatedMenuItems);
   };
@@ -204,7 +129,7 @@ export default function Carte() {
           className="flex items-center gap-2 bg-green-600 px-4 py-2 rounded hover:bg-green-700"
         >
           <Check size={20} />
-          {isEditing ? "Mettre à jour" : "Ajouter"}
+          {isEditing ? 'Mettre à jour' : 'Ajouter'}
         </button>
         <button
           onClick={() => {
@@ -234,7 +159,7 @@ export default function Carte() {
           {categories.map((category) => (
             <button
               key={category.id}
-              onClick={() => setActiveCategory(category.id)}
+              onClick={() => setActiveCategory(category.id as keyof MenuItems)}
               className={`px-6 py-2 rounded-md text-sm font-medium transition-colors ${
                 activeCategory === category.id
                   ? 'bg-[#C4B5A2] text-white'
@@ -283,7 +208,6 @@ export default function Carte() {
                 <span className="text-lg font-bold text-[#C4B5A2]">{item.price}</span>
               </div>
               <p className="text-gray-400">{item.description}</p>
-              
               {user?.role === 'admin' && (
                 <div className="flex gap-2 mt-4 pt-4 border-t border-gray-700">
                   <button
@@ -309,5 +233,3 @@ export default function Carte() {
     </section>
   );
 }
-
-
