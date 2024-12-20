@@ -10,16 +10,16 @@ import 'leaflet-routing-machine'
 import { Navigation } from 'lucide-react'
 
 // Position du restaurant
-const RESTAURANT_POSITION = [45.7769682,4.981032]
+const RESTAURANT_POSITION: [number, number] = [45.7769682, 4.981032]
 
 export default function CustomMap() {
   const [routing, setRouting] = useState(null)
-  const [map, setMap] = useState(null)
+  const [map, setMap] = useState<L.Map | null>(null)
   const [userLocation, setUserLocation] = useState(null)
 
   // Corriger les icônes Leaflet
   useEffect(() => {
-    delete L.Icon.Default.prototype._getIconUrl
+    L.Icon.Default.prototype.options.iconUrl = undefined
     L.Icon.Default.mergeOptions({
       iconRetinaUrl: 'marker-icon-2x.png',
       iconUrl: '/icons/pointer.png',
@@ -54,13 +54,17 @@ export default function CustomMap() {
       <div className="relative">
         {/* Conteneur de la carte avec contrôles de zoom */}
         <div className="relative h-[400px] w-full rounded-xl overflow-hidden">
-          <MapContainer
+        <MapContainer
             center={RESTAURANT_POSITION}
             zoom={13}
             style={{ height: '100%', width: '100%' }}
-            whenCreated={setMap}
-            zoomControl={false} // Désactiver les contrôles de zoom par défaut
-          >
+            whenReady={() => {
+              if (map) {
+                setMap(map);
+              }
+            }}
+            zoomControl={false}
+>
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -75,13 +79,13 @@ export default function CustomMap() {
             {/* Contrôles de zoom personnalisés */}
             <div className="absolute left-4 top-4 z-[1000] flex flex-col space-y-2">
               <button 
-                onClick={() => map.zoomIn()}
+                onClick={() => map && map.zoomIn()}
                 className="w-8 h-8 bg-white text-black font-bold flex items-center justify-center rounded shadow hover:bg-gray-200"
               >
                 +
               </button>
               <button 
-                onClick={() => map.zoomOut()}
+                onClick={() => map && map.zoomOut()}
                 className="w-8 h-8 bg-white text-black font-bold flex items-center justify-center rounded shadow hover:bg-gray-200"
               >
                 -
