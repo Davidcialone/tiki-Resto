@@ -8,7 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 export default function GalleryPage() {
   const { user } = useAuth();
   const [activeCategory, setActiveCategory] = useState('all');
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImage, setSelectedImage] = useState<{ id: number; src: string; category: string; title: string; description: string; } | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingImage, setEditingImage] = useState(null);
@@ -79,7 +79,7 @@ export default function GalleryPage() {
     : images.filter(img => img.category === activeCategory);
 
   useEffect(() => {
-    let interval;
+    let interval: NodeJS.Timeout;
     if (isPlaying && !selectedImage) {
       interval = setInterval(() => {
         setSelectedImage(prev => {

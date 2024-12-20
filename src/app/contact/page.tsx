@@ -6,7 +6,13 @@ import Image from "next/image";
 import emailjs from "@emailjs/browser";
 
 // Composant Toast
-const Toast = ({ message, type, onClose }) => (
+interface ToastProps {
+  message: string;
+  type: 'success' | 'error';
+  onClose: () => void;
+}
+
+const Toast = ({ message, type, onClose }: ToastProps) => (
   <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg flex items-center gap-2 ${
     type === 'success' ? 'bg-green-500' : 'bg-red-500'
   } text-white`}>
@@ -19,7 +25,13 @@ const Toast = ({ message, type, onClose }) => (
 );
 
 // Composant Info Contact
-const ContactInfo = ({ icon, title, info }) => (
+interface ContactInfoProps {
+  icon: React.ReactNode;
+  title: string;
+  info: string;
+}
+
+const ContactInfo = ({ icon, title, info }: ContactInfoProps) => (
   <div className="flex items-start gap-4">
     <div className="p-2 rounded-full border border-[#C4B5A2]">{icon}</div>
     <div>
@@ -30,7 +42,17 @@ const ContactInfo = ({ icon, title, info }) => (
 );
 
 // Composant Champ de texte
-const TextField = ({ id, name, label, value, onChange, placeholder, type = "text" }) => (
+interface TextFieldProps {
+  id: string;
+  name: string;
+  label: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder: string;
+  type?: string;
+}
+
+const TextField = ({ id, name, label, value, onChange, placeholder, type = "text" }: TextFieldProps) => (
   <div>
     <label htmlFor={id} className="block text-sm font-medium mb-2">
       {label}
@@ -49,7 +71,15 @@ const TextField = ({ id, name, label, value, onChange, placeholder, type = "text
 );
 
 // Composant Zone de texte
-const TextArea = ({ id, name, label, value, onChange }) => (
+interface TextAreaProps {
+  id: string;
+  name: string;
+  label: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+}
+
+const TextArea = ({ id, name, label, value, onChange }: TextAreaProps) => (
   <div>
     <label htmlFor={id} className="block text-sm font-medium mb-2">
       {label}
@@ -68,7 +98,11 @@ const TextArea = ({ id, name, label, value, onChange }) => (
 );
 
 // Composant Bouton d'envoi
-const SubmitButton = ({ submitted }) => (
+interface SubmitButtonProps {
+  submitted: boolean;
+}
+
+const SubmitButton = ({ submitted }: SubmitButtonProps) => (
   <button
     type="submit"
     className="w-full bg-[#C4B5A2] hover:bg-[#A69783] text-black font-medium px-6 py-3 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
@@ -96,10 +130,10 @@ export default function ContactPage() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
-  const [toast, setToast] = useState(null);
-  const form = useRef(null);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const form = useRef<HTMLFormElement>(null);
 
-  const showToast = (message, type) => {
+  const showToast = (message: string, type: 'success' | 'error') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 5000);
   };
@@ -111,7 +145,7 @@ export default function ContactPage() {
       .sendForm(
         "service_w43hhbe",
         "template_xb59ysa",
-        form.current,
+        form.current!,
         "qGukIkoXy-BXaqm2L"
       )
       .then(
@@ -203,7 +237,7 @@ export default function ContactPage() {
                       width="100%"
                       height="100%"
                       style={{ border: 0 }}
-                      allowFullScreen=""
+                      allowFullScreen
                       loading="lazy"
                     ></iframe>
                   </div>
