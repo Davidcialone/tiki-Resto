@@ -67,18 +67,19 @@ export default function GalleryPage() {
   ]);
 
   const [newImage, setNewImage] = useState<{
-    id: number | null;
+    id: number;
     src: string;
     category: string;
     title: string;
     description: string;
   }>({
-    id: null,
+    id: 0,  // Initialisation avec un nombre par défaut
     src: "",
     category: "restaurant",
     title: "",
     description: ""
   });
+  
   
 
   const filteredImages = activeCategory === 'all' 
@@ -109,20 +110,22 @@ export default function GalleryPage() {
   };
 
   const handleAddImage = () => {
+    // On garantit ici que l'id est un nombre valide en l'incrémentant à partir du tableau existant
     const imageWithId = {
       ...newImage,
-      id: images.length + 1
+      id: images.length > 0 ? images[images.length - 1].id + 1 : 1 // Incrémentation de l'id
     };
-    setImages([...images, imageWithId]);
+    setImages([...images, imageWithId]); // Ajout de l'image avec id valide
     setIsAddingImage(false);
     setNewImage({
-      id: null,
+      id: 0, // Réinitialisation de l'ID à 0
       src: "",
       category: "restaurant",
       title: "",
       description: ""
     });
   };
+  
 
   const handleEditImage = (image: { id: number; src: string; category: string; title: string; description: string; }) => {
     setEditingImage(image);
@@ -131,14 +134,14 @@ export default function GalleryPage() {
     setSelectedImage(null);
   };
 
-  const handleUpdateImage = () => {
-    const updatedImages = images.map(img =>
-      img.id === editingImage?.id ? newImage : img
-    );
-    setImages(updatedImages);
-    setIsEditing(false);
-    setEditingImage(null);
-  };
+    const handleUpdateImage = () => {
+      const updatedImages = images.map(img =>
+        img.id === editingImage?.id ? newImage : img
+      );
+      setImages(updatedImages);
+      setIsEditing(false);
+      setEditingImage(null);
+    };
 
   const handleDeleteImage = (imageId: number) => {
     const updatedImages = images.filter(img => img.id !== imageId);

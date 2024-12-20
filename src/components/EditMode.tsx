@@ -48,20 +48,21 @@ export default function EditableComponent({ item, editMode, onUpdate, onDelete }
         <input
           type="number"
           value={editedItem.price}
-          onChange={(e) => setEditedItem({...editedItem, price: e.target.value})}
+          onChange={(e) => setEditedItem({...editedItem, price: Number(e.target.value)})}
           className="w-full bg-[#1a1a1a] p-2 rounded mb-2"
         />
         <div className="flex justify-end gap-2">
           <Button
-            variant="ghost"
-            onClick={() => setIsEditing(false)}
-            className="text-gray-400 hover:text-white"
-          >
-            <X className="h-4 w-4 mr-2" />
-            Annuler
-          </Button>
+           variant="outlined" // ou "text"
+           onClick={() => setIsEditing(false)}
+           className="text-gray-400 hover:text-white"
+         >
+           <X className="h-4 w-4 mr-2" />
+           Annuler
+         </Button>
+         
           <Button
-            variant="default"
+            variant="outlined"
             onClick={() => {
               onUpdate(editedItem);
               setIsEditing(false);
@@ -80,16 +81,16 @@ export default function EditableComponent({ item, editMode, onUpdate, onDelete }
     <div className="p-4 border border-[#C4B5A2]/20 rounded-lg relative group">
       <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
         <Button
-          variant="ghost"
-          size="sm"
+          variant="outlined"
+          size="small"
           onClick={() => setIsEditing(true)}
           className="text-[#C4B5A2] hover:text-white mr-2"
         >
           <Pencil className="h-4 w-4" />
         </Button>
         <Button
-          variant="ghost"
-          size="sm"
+          variant="outlined"
+          size="small"
           onClick={() => onDelete(item.id)}
           className="text-red-500 hover:text-red-400"
         >

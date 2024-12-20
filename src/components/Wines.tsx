@@ -4,6 +4,7 @@ import { Pencil, Edit, Trash2, Plus, X, Check } from 'lucide-react';
 
 export default function Wine() {
   const { user } = useAuth();
+
   type WineCategory = {
     name: string;
     region: string;
@@ -207,7 +208,9 @@ export default function Wine() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         {Object.entries(wines).map(([category, categoryWines]) => (
           <div key={category}>
-            <h3 className="text-2xl font-bold mb-6 text-[#C4B5A2]">{categories[category]}</h3>
+            <h3 className="text-2xl font-bold mb-6 text-[#C4B5A2]">
+              {categories[category as keyof typeof categories]} {/* Correction ici */}
+            </h3>
             <div className="space-y-6">
               {categoryWines.map((wine, index) => (
                 <div key={index} className="border-b border-[#C4B5A2]/20 pb-4">
@@ -241,7 +244,7 @@ export default function Wine() {
                       />
                       <div className="flex gap-2">
                         <button
-                          onClick={() => handleSaveWine(category, index)}
+                          onClick={() => handleSaveWine(category as keyof WinesState, index)}
                           className="flex items-center gap-2 bg-green-600 px-4 py-2 rounded hover:bg-green-700"
                         >
                           <Check size={20} />
@@ -273,14 +276,14 @@ export default function Wine() {
                       {user?.role === 'admin' && (
                         <div className="flex gap-2 mt-4">
                           <button
-                            onClick={() => handleEditWine(category, index)}
+                            onClick={() => handleEditWine(category as keyof WinesState, index)}
                             className="flex items-center gap-2 bg-blue-600 px-4 py-2 rounded hover:bg-blue-700"
                           >
                             <Pencil size={20} />
                             Modifier
                           </button>
                           <button
-                            onClick={() => handleDeleteWine(category, index)}
+                            onClick={() => handleDeleteWine(category as keyof WinesState, index)}
                             className="flex items-center gap-2 bg-red-600 px-4 py-2 rounded hover:bg-red-700"
                           >
                             <Trash2 size={20} />
