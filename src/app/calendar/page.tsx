@@ -40,7 +40,7 @@ const mockReservations: { id: number; clientName: string; date: string; time: st
 export default function ReservationCalendar() {
   const [viewType, setViewType] = useState('week'); // 'day', 'week', 'month'
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedReservation, setSelectedReservation] = useState(null);
+  const [selectedReservation, setSelectedReservation] = useState<typeof mockReservations[0] | null>(null);
 
   const viewOptions = [
     { value: 'day', label: 'Jour' },

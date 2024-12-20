@@ -138,7 +138,7 @@ export default function ContactPage() {
     setTimeout(() => setToast(null), 5000);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     emailjs
@@ -162,7 +162,15 @@ export default function ContactPage() {
       );
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -268,7 +276,7 @@ export default function ContactPage() {
               </div>
 
               {/* Colonne de droite - Formulaire */}
-              <div className="bg-[#2a2a2a]/90 rounded-xl p-8 border border-[#C4B5A2]/20 shadow-xl">
+              <div className="space-y-8">
                 <h2 className="text-2xl font-bold mb-6">Envoyez-nous un message</h2>
                 <form ref={form} onSubmit={handleSubmit} className="space-y-6">
                   <TextField
@@ -293,7 +301,7 @@ export default function ContactPage() {
                     name="message"
                     label="Message"
                     value={formData.message}
-                    onChange={handleChange}
+                    onChange={handleTextAreaChange}
                   />
                   <SubmitButton submitted={submitted} />
                 </form>

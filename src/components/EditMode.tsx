@@ -4,7 +4,19 @@ import React, { useState } from 'react';
 import { Pencil, Trash2, Save, X } from 'lucide-react';
 import { Button } from '@mui/material';
 
-export default function EditableComponent({ item, editMode, onUpdate, onDelete }) {
+interface EditableComponentProps {
+  item: {
+    id: string;
+    name: string;
+    description: string;
+    price: number;
+  };
+  editMode: boolean;
+  onUpdate: (item: { id: string; name: string; description: string; price: number }) => void;
+  onDelete: (id: string) => void;
+}
+
+export default function EditableComponent({ item, editMode, onUpdate, onDelete }: EditableComponentProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedItem, setEditedItem] = useState(item);
 

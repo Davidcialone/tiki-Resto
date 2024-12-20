@@ -14,7 +14,23 @@ import {
 } from 'lucide-react';
 
 // Données simulées
-const mockStaff = [
+type Staff = {
+  id: number;
+  name: string;
+  role: string;
+  availability: string;
+  schedule: {
+    monday: string[];
+    tuesday: string[];
+    wednesday: string[];
+    thursday: string[];
+    friday: string[];
+    saturday: string[];
+    sunday: string[];
+  };
+};
+
+const mockStaff: Staff[] = [
   {
     id: 1,
     name: "Marie Dubois",
@@ -49,12 +65,21 @@ const daysOfWeek = [
   "Dimanche"
 ];
 
+type Notification = {
+  message: string;
+  type: 'success' | 'error';
+};
+
+const [showAddStaffModal, setShowAddStaffModal] = useState(false);
+const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null);
+const [notification, setNotification] = useState<Notification | null>(null);
+
 export default function StaffManagementPage() {
   const [showAddStaffModal, setShowAddStaffModal] = useState(false);
-  const [selectedStaff, setSelectedStaff] = useState(null);
-  const [notification, setNotification] = useState(null);
+  const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null);
+  const [notification, setNotification] = useState<Notification | null>(null);
 
-  const showNotification = (message, type = 'success') => {
+  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
     setNotification({ message, type });
     setTimeout(() => setNotification(null), 3000);
   };
@@ -138,7 +163,7 @@ export default function StaffManagementPage() {
                     <tr key={day} className="border-t border-[#C4B5A2]/10">
                       <td className="px-4 py-4 font-medium">{day}</td>
                       {timeSlots.map((slot) => {
-                        const isScheduled = selectedStaff?.schedule[day.toLowerCase()]?.includes(slot);
+                        const isScheduled = selectedStaff?.schedule[day.toLowerCase() as keyof Staff['schedule']]?.includes(slot);
                         return (
                           <td key={slot} className="px-4 py-4">
                             <div className="flex justify-center">

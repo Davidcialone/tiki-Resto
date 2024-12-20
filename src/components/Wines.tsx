@@ -4,7 +4,23 @@ import { Pencil, Edit, Trash2, Plus, X, Check } from 'lucide-react';
 
 export default function Wine() {
   const { user } = useAuth();
-  const [wines, setWines] = useState({
+  type WineCategory = {
+    name: string;
+    region: string;
+    price: {
+      bottle: string;
+      glass: string;
+    };
+  };
+
+  type WinesState = {
+    rouges: WineCategory[];
+    blancs: WineCategory[];
+    roses: WineCategory[];
+    champagnes: WineCategory[];
+  };
+
+  const [wines, setWines] = useState<WinesState>({
     rouges: [
       {
         name: "Côtes du Rhône",
@@ -55,10 +71,8 @@ export default function Wine() {
     ]
   });
 
-  const [editingWine, setEditingWine] = useState({ category: null, index: null });
-  const [isAddingWine, setIsAddingWine] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState('rouges');
-  const [newWine, setNewWine] = useState({
+  const [editingWine, setEditingWine] = useState<{ category: string | null, index: number | null }>({ category: null, index: null });
+  const [newWine, setNewWine] = useState<WineCategory>({
     name: "",
     region: "",
     price: {
@@ -66,6 +80,8 @@ export default function Wine() {
       glass: ""
     }
   });
+  const [isAddingWine, setIsAddingWine] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<keyof WinesState>('rouges');
 
   const categories = {
     rouges: "Vins Rouges",
@@ -74,19 +90,19 @@ export default function Wine() {
     champagnes: "Champagnes"
   };
 
-  const handleEditWine = (category, index) => {
+  const handleEditWine = (category: keyof WinesState, index: number) => {
     setEditingWine({ category, index });
     setNewWine(wines[category][index]);
   };
 
-  const handleSaveWine = (category, index) => {
+  const handleSaveWine = (category: keyof WinesState, index: number) => {
     const updatedWines = { ...wines };
     updatedWines[category][index] = newWine;
     setWines(updatedWines);
     setEditingWine({ category: null, index: null });
   };
 
-  const handleDeleteWine = (category, index) => {
+  const handleDeleteWine = (category: keyof WinesState, index: number) => {
     const updatedWines = { ...wines };
     updatedWines[category] = updatedWines[category].filter((_, idx) => idx !== index);
     setWines(updatedWines);
@@ -170,7 +186,7 @@ export default function Wine() {
           <select
             className="mr-4 p-2 bg-gray-800 rounded"
             value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
+            onChange={(e) => setSelectedCategory(e.target.value as keyof WinesState)}
           >
             {Object.entries(categories).map(([key, value]) => (
               <option key={key} value={key}>{value}</option>

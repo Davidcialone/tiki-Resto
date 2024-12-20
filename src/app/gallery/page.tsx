@@ -11,7 +11,7 @@ export default function GalleryPage() {
   const [selectedImage, setSelectedImage] = useState<{ id: number; src: string; category: string; title: string; description: string; } | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [editingImage, setEditingImage] = useState(null);
+  const [editingImage, setEditingImage] = useState<{ id: number; src: string; category: string; title: string; description: string; } | null>(null);
   const [isAddingImage, setIsAddingImage] = useState(false);
 
   const [categories, setCategories] = useState([
@@ -66,13 +66,20 @@ export default function GalleryPage() {
     }
   ]);
 
-  const [newImage, setNewImage] = useState({
+  const [newImage, setNewImage] = useState<{
+    id: number | null;
+    src: string;
+    category: string;
+    title: string;
+    description: string;
+  }>({
     id: null,
     src: "",
     category: "restaurant",
     title: "",
     description: ""
   });
+  
 
   const filteredImages = activeCategory === 'all' 
     ? images 
@@ -117,7 +124,7 @@ export default function GalleryPage() {
     });
   };
 
-  const handleEditImage = (image) => {
+  const handleEditImage = (image: { id: number; src: string; category: string; title: string; description: string; }) => {
     setEditingImage(image);
     setNewImage(image);
     setIsEditing(true);
@@ -126,14 +133,14 @@ export default function GalleryPage() {
 
   const handleUpdateImage = () => {
     const updatedImages = images.map(img =>
-      img.id === editingImage.id ? newImage : img
+      img.id === editingImage?.id ? newImage : img
     );
     setImages(updatedImages);
     setIsEditing(false);
     setEditingImage(null);
   };
 
-  const handleDeleteImage = (imageId) => {
+  const handleDeleteImage = (imageId: number) => {
     const updatedImages = images.filter(img => img.id !== imageId);
     setImages(updatedImages);
     setSelectedImage(null);

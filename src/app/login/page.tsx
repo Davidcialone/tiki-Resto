@@ -20,7 +20,7 @@ export default function AuthPage() {
     confirmPassword: ''
   });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -44,13 +44,13 @@ export default function AuthPage() {
         toast.error(isLogin ? 'Échec de la connexion' : "Échec de l'inscription");
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error((error as any).message);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,

@@ -5,11 +5,11 @@ const AdminPanel = ({ isAdmin = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('carte');
   const [isEditing, setIsEditing] = useState(false);
-  const [editingItem, setEditingItem] = useState(null);
+  const [editingItem, setEditingItem] = useState<any>(null);
 
   if (!isAdmin) return null;
 
-  const AdminButton = ({ onClick, children, className = "" }) => (
+  const AdminButton = ({ onClick, children, className = "" }: { onClick: React.MouseEventHandler<HTMLButtonElement>, children: React.ReactNode, className?: string }) => (
     <button 
       onClick={onClick}
       className={`px-4 py-2 rounded bg-[#C4B5A2] text-black hover:bg-[#a39582] transition-colors ${className}`}
@@ -18,7 +18,7 @@ const AdminPanel = ({ isAdmin = false }) => {
     </button>
   );
 
-  const AdminControls = ({ item, onEdit, onDelete }) => (
+  const AdminControls = ({ item, onEdit, onDelete }: { item: any, onEdit: (item: any) => void, onDelete: (item: any) => void }) => (
     <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
       <button 
         onClick={() => onEdit(item)}
@@ -35,7 +35,7 @@ const AdminPanel = ({ isAdmin = false }) => {
     </div>
   );
 
-  const EditModal = ({ item, onClose, onSave }) => (
+  const EditModal = ({ item, onClose, onSave }: { item: any, onClose: () => void, onSave: () => void }) => (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-[#2a2a2a] rounded-xl p-8 max-w-md w-full">
         <div className="flex justify-between items-center mb-6">

@@ -44,7 +44,7 @@ export default function EventsPage() {
   ]);
 
   const [newEvent, setNewEvent] = useState<typeof events[0]>({
-    id: null,
+    id: 0,
     title: "",
     description: "",
     date: "",
@@ -80,7 +80,7 @@ export default function EventsPage() {
     });
   }, [groupedEvents]);
 
-  const handleNewsletterSubmit = (e) => {
+  const handleNewsletterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubscribed(true);
     setTimeout(() => setSubscribed(false), 3000);
@@ -95,7 +95,7 @@ export default function EventsPage() {
     setEvents([...events, eventWithId]);
     setIsAddingEvent(false);
     setNewEvent({
-      id: null,
+      id: 0,
       title: "",
       description: "",
       date: "",
@@ -120,7 +120,7 @@ export default function EventsPage() {
     setEditingEvent(null);
   };
 
-  const handleDeleteEvent = (eventId) => {
+  const handleDeleteEvent = (eventId: number) => {
     const updatedEvents = events.filter(event => event.id !== eventId);
     setEvents(updatedEvents);
   };
