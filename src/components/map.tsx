@@ -1,38 +1,44 @@
-"use client"
+"use client";
 
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
-import { useState } from 'react'
-import 'leaflet/dist/leaflet.css'
-import 'leaflet-routing-machine/dist/leaflet-routing-machine.css'
-import { useEffect } from 'react'
-import L from 'leaflet'
-import 'leaflet-routing-machine'
-import { Navigation } from 'lucide-react'
+import dynamic from "next/dynamic"; // Pour désactiver le SSR sur certains composants
+import { useState, useEffect } from "react";
+import "leaflet/dist/leaflet.css";
+import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
+import { Navigation } from "lucide-react";
+import { Map as LeafletMap } from "leaflet"; // Import du type LeafletMap
 
 // Position du restaurant
-const RESTAURANT_POSITION = [45.7769682,4.981032]
+const RESTAURANT_POSITION: [number, number] = [45.7769682, 4.981032];
+
+// Chargement dynamique de react-leaflet et Leaflet
+const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
+const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
+const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
+const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), { ssr: false });
 
 export default function CustomMap() {
-  const [routing, setRouting] = useState(null)
-  const [map, setMap] = useState(null)
-  const [userLocation, setUserLocation] = useState(null)
+  const [map, setMap] = useState<LeafletMap | null>(null); // Typage explicite de l'état
 
   // Corriger les icônes Leaflet
   useEffect(() => {
-    delete L.Icon.Default.prototype._getIconUrl
-    L.Icon.Default.mergeOptions({
-      iconRetinaUrl: 'marker-icon-2x.png',
-      iconUrl: '/icons/pointer.png',
-      shadowUrl: 'marker-shadow.png',
-    })
-  }, [])
+    if (typeof window !== "undefined") {
+      const L = require("leaflet"); // Importer Leaflet uniquement côté client
+      delete L.Icon.Default.prototype._getIconUrl; // Nettoyer d'abord les icônes par défaut
+      L.Icon.Default.mergeOptions({
+        iconRetinaUrl: "/icons/marker-icon-2x.png",
+        iconUrl: "/icons/marker-icon.png",
+        shadowUrl: "/icons/marker-shadow.png",
+      });
+    }
+  }, []);
 
   // Gérer la navigation
   const handleNavigation = () => {
-    // Ouvrir l'application de navigation par défaut
-    const url = `https://www.google.com/maps/dir/?api=1&destination=${RESTAURANT_POSITION[0]},${RESTAURANT_POSITION[1]}`
-    window.open(url, '_blank')
-  }
+    if (typeof window !== "undefined") {
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${RESTAURANT_POSITION[0]},${RESTAURANT_POSITION[1]}`;
+      window.open(url, "_blank");
+    }
+  };
 
   return (
     <div className="flex flex-col space-y-4">
@@ -40,7 +46,7 @@ export default function CustomMap() {
         <h2 className="text-3xl font-bold mb-4">Itinéraire</h2>
         <div className="text-gray-300 mb-4">
           <p>Notre adresse :</p>
-          <a 
+          <a
             href={`https://www.google.com/maps/search/?api=1&query=${RESTAURANT_POSITION[0]},${RESTAURANT_POSITION[1]}`}
             className="text-[#C4B5A2] hover:text-white transition-colors text-lg"
             target="_blank"
@@ -52,14 +58,14 @@ export default function CustomMap() {
       </div>
 
       <div className="relative">
-        {/* Conteneur de la carte avec contrôles de zoom */}
+        {/* Conteneur de la carte */}
         <div className="relative h-[400px] w-full rounded-xl overflow-hidden">
           <MapContainer
             center={RESTAURANT_POSITION}
             zoom={13}
-            style={{ height: '100%', width: '100%' }}
-            whenCreated={setMap}
-            zoomControl={false} // Désactiver les contrôles de zoom par défaut
+            style={{ height: "100%", width: "100%" }}
+            whenReady={() => setMap(map)} // Typage explicite avec as LeafletMap
+            zoomControl={false}
           >
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -71,22 +77,6 @@ export default function CustomMap() {
                 Chemin du Pontet, 69150 Décines-Charpieu
               </Popup>
             </Marker>
-            
-            {/* Contrôles de zoom personnalisés */}
-            <div className="absolute left-4 top-4 z-[1000] flex flex-col space-y-2">
-              <button 
-                onClick={() => map.zoomIn()}
-                className="w-8 h-8 bg-white text-black font-bold flex items-center justify-center rounded shadow hover:bg-gray-200"
-              >
-                +
-              </button>
-              <button 
-                onClick={() => map.zoomOut()}
-                className="w-8 h-8 bg-white text-black font-bold flex items-center justify-center rounded shadow hover:bg-gray-200"
-              >
-                -
-              </button>
-            </div>
           </MapContainer>
         </div>
 

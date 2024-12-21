@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import React, { useState } from 'react';
-import { Calendar, Clock, Users, MessageSquare, Phone, Mail, MapPin, CheckCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Calendar, Clock, Users, MessageSquare, Phone, Mail, MapPin } from 'lucide-react';
 import Image from 'next/image';
 import Map from '@/components/map';
 
@@ -14,6 +14,7 @@ export default function ReservationPage() {
   });
 
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [isClient, setIsClient] = useState(false);  // Etat pour savoir si on est côté client
 
   const availableTimes = [
     '11:30', '12:00', '12:30', '13:00', '13:30',
@@ -33,8 +34,15 @@ export default function ReservationPage() {
     }));
   };
 
+  // Vérification côté client pour éviter l'accès à `window` côté serveur
+  useEffect(() => {
+    setIsClient(typeof window !== "undefined");  // Définit si on est côté client
+  }, []);
+
   const handleLaunchNavigation = () => {
-    window.open('https://maps.google.com?q=Chemin+du+Pontet+69150+Décines-Charpieu', '_blank');
+    if (isClient) {  // S'assure que le code est exécuté seulement côté client
+      window.open('https://maps.google.com?q=Chemin+du+Pontet+69150+Décines-Charpieu', '_blank');
+    }
   };
 
   return (
@@ -196,45 +204,20 @@ export default function ReservationPage() {
                   <h2 className="text-2xl font-semibold mb-6">Informations de contact</h2>
                   <div className="space-y-6">
                     <div className="flex items-start gap-4">
-                      <div className="p-2 rounded-full border border-[#C4B5A2]">
+                      <div className="p-2 bg-[#C4B5A2]/20 rounded-lg">
                         <Phone className="w-6 h-6 text-[#C4B5A2]" />
                       </div>
                       <div>
-                        <h3 className="font-semibold mb-1">Téléphone</h3>
-                        <p className="text-gray-400">04 78 49 02 39</p>
+                        <p className="font-medium">Tél : +33 1 23 45 67 89</p>
                       </div>
                     </div>
 
                     <div className="flex items-start gap-4">
-                      <div className="p-2 rounded-full border border-[#C4B5A2]">
+                      <div className="p-2 bg-[#C4B5A2]/20 rounded-lg">
                         <Mail className="w-6 h-6 text-[#C4B5A2]" />
                       </div>
                       <div>
-                        <h3 className="font-semibold mb-1">Email</h3>
-                        <p className="text-gray-400">contact@autiki.fr</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-4">
-                      <div className="p-2 rounded-full border border-[#C4B5A2]">
-                        <MapPin className="w-6 h-6 text-[#C4B5A2]" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold mb-1">Adresse</h3>
-                        <p className="text-gray-400">Chemin du Pontet<br />69330 Decines</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-4">
-                      <div className="p-2 rounded-full border border-[#C4B5A2]">
-                        <Clock className="w-6 h-6 text-[#C4B5A2]" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold mb-1">Horaires d'ouverture</h3>
-                        <div className="text-gray-400">
-                          <p>Mar-Dim: 12h-14h30</p>
-                          <p>Mer-Sam: 19h-22h30</p>
-                        </div>
+                        <p className="font-medium">contact@restaurant.com</p>
                       </div>
                     </div>
                   </div>
@@ -244,32 +227,6 @@ export default function ReservationPage() {
           </div>
         </div>
       </main>
-
-      {/* Modal de confirmation */}
-      {showConfirmation && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50">
-          <div className="bg-[#1A1A1A] p-8 rounded-xl max-w-md w-full mx-4 border border-[#C4B5A2]/20">
-            <div className="text-center">
-              <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-              <h3 className="text-2xl font-bold mb-4">Réservation Confirmée</h3>
-              <div className="text-gray-300 space-y-2">
-                <p>Date : {new Date(formData.date).toLocaleDateString('fr-FR')}</p>
-                <p>Heure : {formData.time}</p>
-                <p>Nombre de personnes : {formData.guests}</p>
-                {formData.specialRequests && (
-                  <p>Demandes spéciales : {formData.specialRequests}</p>
-                )}
-              </div>
-              <button
-                onClick={() => setShowConfirmation(false)}
-                className="mt-6 bg-[#C4B5A2] text-black font-medium px-6 py-2 rounded-lg hover:bg-[#a39482] transition-colors"
-              >
-                Fermer
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
